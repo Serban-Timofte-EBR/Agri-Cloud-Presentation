@@ -73,7 +73,7 @@ const AnimatedBackgroundSection: React.FC = () => {
             boxShadow: "0 8px 15px rgba(0, 0, 0, 0.2)",
           }}
         >
-          Learn More
+          Scroll Down to Learn More
         </Button>
       </Container>
     </Box>

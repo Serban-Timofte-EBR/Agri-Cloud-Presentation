@@ -33,22 +33,7 @@ const HeroSection: React.FC = () => {
         >
           <Button
             variant="text"
-            sx={{
-              color: "black",
-              textTransform: "none",
-              fontWeight: "italic",
-              fontSize: "1rem",
-              padding: "6px 12px",
-              "&:hover": {
-                textDecoration: "underline", 
-                backgroundColor: "transparent",
-              },
-            }}
-          >
-            For Private Entities
-          </Button>
-          <Button
-            variant="text"
+            href="/farmers"
             sx={{
               color: "black",
               textTransform: "none",
@@ -61,7 +46,24 @@ const HeroSection: React.FC = () => {
               },
             }}
           >
-            For Public Entities
+            Private Entities
+          </Button>
+          <Button
+            variant="text"
+            href="/public-partners"
+            sx={{
+              color: "black",
+              textTransform: "none",
+              fontWeight: "italic",
+              fontSize: "1rem",
+              padding: "6px 12px",
+              "&:hover": {
+                textDecoration: "underline",
+                backgroundColor: "transparent",
+              },
+            }}
+          >
+            Public Entities
           </Button>
         </Box>
 
@@ -79,7 +81,7 @@ const HeroSection: React.FC = () => {
         </Typography>
 
         <Button variant="contained" color="primary" size="large">
-          Learn More
+          Scroll Down to Learn More
         </Button>
       </Box>
     </Box>

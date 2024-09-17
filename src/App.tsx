@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import FarmersPage from "./pages/FarmersPage";
 import PublicPartners from "./pages/PublicPartners";
+import ContactPage from "./pages/ContactPage";
 
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/home" element={<HomePage />} />
         <Route path="/farmers" element={<FarmersPage />} />
         <Route path="/public-partners" element={<PublicPartners />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Routes>
     </Router>
   );
