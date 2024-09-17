@@ -3,6 +3,9 @@ import Navbar from '../components/Navbar';
 import FarmersHeroSection from '../components/FarmersPage/FarmersHeroSection';
 import FarmersFeatures from '../components/FarmersPage/FarmersFeatures';
 import AppShowcaseSection from '../components/FarmersPage/AppShowcaseSection';
+import HowItWorksSection from '../components/FarmersPage/HowItWorksSection';
+import PreRegisterSection from '../components/PreRegisterSection';
+import DigitiGoalsFarmers from '../components/FarmersPage/DigitiGoalsFarmers';
 
 const FarmersPage = () => {
   return (
@@ -11,6 +14,9 @@ const FarmersPage = () => {
       <FarmersHeroSection />
       <FarmersFeatures />
       <AppShowcaseSection />
+      <HowItWorksSection />
+      <DigitiGoalsFarmers />
+      <PreRegisterSection />
       {/* <Container sx = {{width: '100%'}}>
         <DigitConcept />
         <PerformanceClaims />
