@@ -1,5 +1,3 @@
-// src/components/RegionalAgriculturalInsights.tsx
-
 import React, { useState } from "react";
 import {
   Box,
@@ -18,11 +16,13 @@ import { Bar, Line } from "react-chartjs-2";
 import {
   MapContainer,
   TileLayer,
-  CircleMarker,
+  Polygon,
   Tooltip as LeafletTooltip,
+  useMap,
 } from "react-leaflet";
-import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
-import { LatLngExpression } from "leaflet"; // Import the LatLngExpression type
+import "leaflet/dist/leaflet.css";
+import { LatLngExpression } from "leaflet";
+import L from "leaflet";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -34,6 +34,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import GaugeChart from "react-gauge-chart";
+import Disclaimer from "../Disclaimer";
 
 ChartJS.register(
   CategoryScale,
@@ -53,7 +55,7 @@ type RegionData = {
     pestOutbreaks: number[];
     economicImpact: number[];
     co2Emissions: number[];
-    coordinates: LatLngExpression; // Use LatLngExpression type here
+    coordinates: LatLngExpression[];
   };
 };
 
@@ -64,7 +66,16 @@ const regionData: RegionData = {
     pestOutbreaks: [10, 20, 15, 30],
     economicImpact: [150, 200, 170, 220],
     co2Emissions: [5.1, 4.9, 5.3, 5.0, 5.2, 5.4],
-    coordinates: [47.1585, 27.6014], // Coordinates for Moldova
+    coordinates: [
+      [48.467, 26.902],
+      [46.722, 28.233],
+      [45.967, 28.946],
+      [45.453, 28.167],
+      [45.824, 27.009],
+      [46.644, 26.828],
+      [47.424, 26.598],
+      [48.467, 26.902],
+    ], // Polygon for Moldova
   },
   Oltenia: {
     cropHealth: [65, 70, 55, 80],
@@ -72,7 +83,14 @@ const regionData: RegionData = {
     pestOutbreaks: [15, 25, 20, 35],
     economicImpact: [130, 180, 160, 210],
     co2Emissions: [4.8, 5.0, 4.9, 5.1, 5.3, 5.2],
-    coordinates: [44.3186, 23.8009], // Coordinates for Oltenia
+    coordinates: [
+      [44.872, 23.181],
+      [44.676, 22.614],
+      [44.292, 23.034],
+      [44.498, 23.834],
+      [44.723, 24.262],
+      [44.872, 23.181],
+    ], // Polygon for Oltenia
   },
   Ardeal: {
     cropHealth: [85, 95, 70, 75],
@@ -80,13 +98,47 @@ const regionData: RegionData = {
     pestOutbreaks: [5, 15, 10, 20],
     economicImpact: [200, 240, 180, 250],
     co2Emissions: [5.5, 5.7, 5.6, 5.8, 5.9, 5.6],
-    coordinates: [46.7704, 23.5914], // Coordinates for Ardeal
+    coordinates: [
+      [46.342, 23.057],
+      [47.543, 23.997],
+      [46.879, 24.662],
+      [45.718, 24.477],
+      [46.342, 23.057],
+    ], // Polygon for Ardeal
   },
+};
+
+const gaugeOptions = {
+  nrOfLevels: 30,
+  colors: ["#00e396", "#feb019", "#ff4560"],
+  arcWidth: 0.3,
+  percent: 0.75, 
+  needleColor: "#464A4F",
+};
+
+const getRiskLevelPercentage = (region: keyof typeof regionData) => {
+  return Math.random(); // Random value for demonstration
+};
+
+const DynamicRiskAssessmentGauge: React.FC<{
+  selectedRegion: keyof typeof regionData;
+}> = ({ selectedRegion }) => {
+  return (
+    <GaugeChart
+      id="risk-gauge-chart"
+      nrOfLevels={gaugeOptions.nrOfLevels}
+      colors={gaugeOptions.colors}
+      arcWidth={gaugeOptions.arcWidth}
+      percent={getRiskLevelPercentage(selectedRegion)}
+      needleColor={gaugeOptions.needleColor}
+      textColor="#464A4F"
+    />
+  );
 };
 
 const RegionalAgriculturalInsights: React.FC = () => {
   const [selectedRegion, setSelectedRegion] =
-    useState<keyof typeof regionData>("Moldova"); // Restrict type to keys of regionData
+    useState<keyof typeof regionData>("Moldova");
 
   const regions = Object.keys(regionData) as (keyof typeof regionData)[];
 
@@ -134,6 +186,18 @@ const RegionalAgriculturalInsights: React.FC = () => {
         tension: 0.1,
       },
     ],
+  };
+
+  const MapFocus = ({ region }: { region: keyof typeof regionData }) => {
+    const map = useMap();
+
+    // Convert the coordinates array to a LatLngBounds
+    const bounds = L.latLngBounds(
+      regionData[region].coordinates as [number, number][]
+    );
+
+    map.fitBounds(bounds);
+    return null;
   };
 
   return (
@@ -273,7 +337,7 @@ const RegionalAgriculturalInsights: React.FC = () => {
         <Grid item xs={12} md={6}>
           <Box
             sx={{
-              height: "700px",
+              height: "700px", // Match left column height
               borderRadius: 3,
               overflow: "hidden",
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
@@ -290,17 +354,18 @@ const RegionalAgriculturalInsights: React.FC = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
               {Object.keys(regionData).map((region) => (
-                <CircleMarker
+                <Polygon
                   key={region}
-                  center={
+                  pathOptions={{
+                    color: selectedRegion === region ? "#FF6347" : "#007BFF",
+                    fillColor:
+                      selectedRegion === region ? "#FF6347" : "#007BFF",
+                    fillOpacity: 0.3,
+                    weight: selectedRegion === region ? 3 : 1,
+                  }}
+                  positions={
                     regionData[region as keyof typeof regionData].coordinates
                   }
-                  radius={12}
-                  color={selectedRegion === region ? "#FF6347" : "#007BFF"}
-                  fillColor={selectedRegion === region ? "#FF6347" : "#007BFF"}
-                  fillOpacity={0.6}
-                  stroke={selectedRegion === region} // Highlight selected region with a dashed stroke
-                  pathOptions={{ dashArray: "5, 10" }}
                 >
                   <LeafletTooltip
                     direction="right"
@@ -312,18 +377,26 @@ const RegionalAgriculturalInsights: React.FC = () => {
                       {region}
                     </Typography>
                   </LeafletTooltip>
-                </CircleMarker>
+                </Polygon>
               ))}
+              <MapFocus region={selectedRegion} />
             </MapContainer>
           </Box>
 
           {/* Predictive Insights */}
           <Box
             sx={{
-              p: 3,
-              background: "linear-gradient(135deg, #ffffff, #f0f0f0)",
-              borderRadius: 3,
-              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+              p: 4,
+              background: "linear-gradient(135deg, #ffffff, #f7f7f7)",
+              borderRadius: 4,
+              boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
+              mt: 3,
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1px solid #e0e0e0",
             }}
           >
             <Typography
@@ -332,22 +405,102 @@ const RegionalAgriculturalInsights: React.FC = () => {
                 fontWeight: "bold",
                 color: "#2E7D32",
                 mb: 2,
-                textAlign: "center",
+                textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
               }}
             >
               Predictive Insights for {selectedRegion}
             </Typography>
             <Typography
               variant="body1"
-              sx={{ color: "#555", textAlign: "center" }}
+              sx={{ color: "#555", mb: 2, maxWidth: "80%" }}
             >
               Based on current data, the platform recommends adjusting
               irrigation levels to prevent potential water stress and applying
-              pest management strategies to mitigate predicted outbreaks.
+              pest management strategies to mitigate predicted outbreaks. Ensure
+              soil nutrient balance to optimize growth and enhance resilience
+              against weather changes.
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#777", maxWidth: "80%" }}>
+              Future forecast analysis indicates a need for diversified crop
+              planning to balance economic growth and environmental
+              sustainability in the coming years. Consider implementing
+              sustainable farming practices and advanced monitoring systems to
+              further enhance productivity.
             </Typography>
           </Box>
+
+          {/* Risk Assessment Gauge */}
+          {/* Risk Assessment Gauge */}
+          <Card
+            sx={{
+              p: 3,
+              background: "#ffffff",
+              borderRadius: 3,
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+              transition: "transform 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-5px)",
+                boxShadow: "0 6px 20px rgba(0, 0, 0, 0.2)",
+              },
+              height: "420px", 
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mt: 4,
+              mx: 2, 
+              overflowY: "auto",
+            }}
+          >
+            <CardContent
+              sx={{
+                textAlign: "center",
+                width: "100%", // Ensure the content takes full width
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: "bold",
+                  color: "#2E7D32", // Updated color for better visibility
+                  mb: 2,
+                  textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                Risk Assessment Gauge
+              </Typography>
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <DynamicRiskAssessmentGauge selectedRegion={selectedRegion} />
+              </Box>
+
+              {/* Contextual Information */}
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "#333", // Darker color for better visibility
+                  mt: 3,
+                  px: 2,
+                  maxWidth: "95%", // Ensures the text doesn't touch the card edges
+                  lineHeight: 1.5,
+                }}
+              >
+                The Risk Assessment Gauge provides a real-time evaluation of
+                potential risks associated with farming activities in{" "}
+                {selectedRegion}. It includes factors like weather conditions,
+                soil health, pest outbreaks, and water availability, guiding you
+                to take timely actions.
+              </Typography>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
+      <Disclaimer />
     </Box>
   );
 };
