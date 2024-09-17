@@ -109,7 +109,7 @@ const Navbar: React.FC = () => {
               color="inherit"
               aria-label="menu"
               onClick={handleMenuClick}
-              sx={{ color: "#FFEB3B" }} // Mobile menu icon color
+              sx={{ color: "#FFEB3B" }}
             >
               <MenuIcon />
             </IconButton>
@@ -120,7 +120,7 @@ const Navbar: React.FC = () => {
               sx={{
                 mt: "45px",
                 "& .MuiPaper-root": {
-                  backgroundColor: "#224522", // Background for the mobile menu
+                  backgroundColor: "#224522",
                   color: "white",
                 },
               }}

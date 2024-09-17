@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import FarmersPage from "./pages/FarmersPage";
-import PrivatePartnersPage from "./pages/PublicPartners";
+import PublicPartners from "./pages/PublicPartners";
 
 
 const App = () => {
@@ -10,8 +10,9 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/farmers" element={<FarmersPage />} />
-        <Route path="/public-partners" element={<PrivatePartnersPage />} />
+        <Route path="/public-partners" element={<PublicPartners />} />
       </Routes>
     </Router>
   );

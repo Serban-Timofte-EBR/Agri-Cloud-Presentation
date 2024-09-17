@@ -54,7 +54,7 @@ const PublicPartnersHero: React.FC = () => {
                 fontWeight: "bold",
               }}
             >
-              Get Started
+              Scroll to Get Started
             </Button>
           </motion.div>
         </Box>
