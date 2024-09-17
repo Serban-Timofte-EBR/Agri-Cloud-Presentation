@@ -17,13 +17,6 @@ const FarmersPage = () => {
       <HowItWorksSection />
       <DigitiGoalsFarmers />
       <PreRegisterSection />
-      {/* <Container sx = {{width: '100%'}}>
-        <DigitConcept />
-        <PerformanceClaims />
-        <DemoParcelDashboard />
-        <PreRegisterSection />
-        <Footer />
-      </Container> */}
     </>
   );
 };
